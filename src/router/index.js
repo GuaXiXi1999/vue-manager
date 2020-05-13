@@ -1,34 +1,10 @@
-// import Vue from 'vue'
-// import VueRouter from 'vue-router'
-// import Home from '../views/Home.vue'
-//
-// Vue.use(VueRouter)
-//
-// const routes = [
-//   {
-//     path: '/',
-//     name: 'Home',
-//     component: Home
-//   },
-//   {
-//     path: '/about',
-//     name: 'About',
-//     // route level code-splitting
-//     // this generates a separate chunk (about.[hash].js) for this route
-//     // which is lazy-loaded when the route is visited.
-//     component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
-//   }
-// ]
-//
-// const router = new VueRouter({
-//   routes
-// })
-
 // export default router
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Login from '../components/Login.vue'
 import Home from '../components/Home.vue'
+import Users from '../components/users/Users.vue'
+import Welcome from '../components/Welcome.vue'
 Vue.use(VueRouter)
 // 导入模板
 // 配置路由规则
@@ -36,7 +12,15 @@ const router = new VueRouter({
   routes:[
     { path: '/', redirect:'/login' },
     { path:'/login', component:Login },
-    { path:'/Home', component:Home }
+    {
+      path:'/Home',
+      component: Home,
+      redirect: '/Welcome',
+      children : [
+        { path: '/Welcome', component: Welcome },
+        { path: '/users', component: Users }
+      ]
+    }
   ]
 })
 

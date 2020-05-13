@@ -8,7 +8,16 @@ body,
   margin: 0;
   padding: 0;
 }
-.el-form-item__content {
-  margin-left: 0!important;
+.el-menu {
+  height: 100%;
+}
+.el-menu-item {
+  left: -2px;
+}
+.el-main {
+  background-color: #eaeef2;
+}
+.el-breadcrumb {
+  margin-bottom: 20px;
 }
 /*# sourceMappingURL=global.css.map */

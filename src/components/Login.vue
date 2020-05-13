@@ -115,4 +115,7 @@
       justify-content: center;
     }
   }
+  .el-form-item__content{
+    margin-left: 0!important;
+  }
 </style>
