@@ -3,7 +3,7 @@
       <!-- 1.面包屑导航 -->
 
       <!-- 3. 组件名当做双标签调用 使用属性传 要传的数据 子组件使用prop数组接收 数据 并在模板中当做data数据使用 传字符串 双引号内还要使用单引号 -->
-      <Breadcrumb :firstmenu="'用户管理'" :secondarymenu="'用户列表'"></Breadcrumb>
+      <!--<Breadcrumb :firstmenu="'用户管理'" :secondarymenu="'用户列表'"></Breadcrumb>-->
       <!--卡片-->
       <el-card class="box-card">
         <div class="text item">
@@ -40,9 +40,11 @@
             </el-table-column>
             <el-table-column label="操作">
               <template #default="{ row }">
-                <el-button type="primary" icon="el-icon-edit" size="mini"></el-button>
+                <el-button type="primary" icon="el-icon-edit" size="mini" @click="geteditUser(row.id)"></el-button>
                 <el-button @click="removeUser(row.id)" type="danger" icon="el-icon-delete" size="mini"></el-button>
-                <el-tooltip class="item" effect="dark" content="分配角色" placement="top" :enterable="false"><el-button type="warning" icon="el-icon-star-off" size="mini"></el-button></el-tooltip>
+                <el-tooltip class="item" effect="dark" content="分配角色" placement="top" :enterable="false">
+                  <el-button type="warning" icon="el-icon-star-off" size="mini" @click="openSetRoleInfo(row)"></el-button>
+                </el-tooltip>
               </template>
 
             </el-table-column>
@@ -63,7 +65,7 @@
               :total="total">
             </el-pagination>
           </div>
-          <!-- 对话框 -->
+          <!-- 添加对话框 -->
           <div>
             <el-dialog
               title="添加用户"
@@ -91,15 +93,66 @@
             </span>
             </el-dialog>
           </div>
+          <!-- 修改对话框 -->
+          <div>
+            <el-dialog
+              title="添加用户"
+              :visible.sync="editDialogVisible"
+              width="50%">
+              <!-- 对话框表单结构 model 绑定表单数据源-->
+              <el-form :model="editForm" status-icon :rules="addFormRules" ref="editRef" label-width="70px" class="demo-ruleForm">
+                <el-form-item label="用户名" prop="username">
+                  <el-input type="text" v-model="editForm.username" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="邮箱" prop="email">
+                  <el-input type="text" v-model="editForm.email"></el-input>
+                </el-form-item>
+                <el-form-item label="手机号" prop="mobile">
+                  <el-input type="text" v-model="editForm.mobile"></el-input>
+                </el-form-item>
+              </el-form>
+              <span slot="footer" class="dialog-footer">
+              <el-button @click="editDialogVisible = false">取 消</el-button>
+              <el-button type="primary" @click="editUserInfo">确 定</el-button>
+            </span>
+            </el-dialog>
+          </div>
+          <!-- 分配角色对话框 -->
+          <div>
+            <el-dialog
+              title="分配角色"
+              :visible.sync="setRoleDialogVisible"
+              @close="setRoleDialogClosed"
+              width="50%">
+              <!-- 内容 -->
+              <div>
+                <p>当前的用户：{{ userInfo.username }}</p>
+                <p>当前的角色：{{ userInfo.role_name }}</p>
+                <p>
+                  <!--// 下拉列表-->
+                  <el-select v-model="roleId" placeholder="请选择">
+                    <el-option
+                      v-for="item in selectList"
+                      :key="item.id"
+                      :label="item.roleName"
+                      :value="item.id">
+                    </el-option>
+                  </el-select>
+                </p>
+              </div>
+              <span slot="footer" class="dialog-footer">
+              <el-button @click="setRoleDialogVisible = false">取 消</el-button>
+              <el-button type="primary" @click="setRoleInfo">确 定</el-button>
+            </span>
+            </el-dialog>
+          </div>
         </div>
       </el-card>
     </div>
 </template>
 
 <script>
-  // 使用面包屑
-  // 1. 导入公共子组件
-  import Breadcrumb from '../subComponents/breadcrumb.vue'
+
     export default {
       name: 'Users',
       data() {
@@ -135,6 +188,8 @@
           userList: [],
           total: 0,
           dialogVisible: false,
+          editDialogVisible: false,
+          setRoleDialogVisible : false,
           // 表单数据对象
           addForm:{
             username: '',
@@ -142,6 +197,13 @@
             email: '',
             mobile: ''
           },
+          editForm:{
+            id:'',
+            username: '',
+            email: '',
+            mobile: ''
+          },
+          roleId: '',
           // 表单验证对象
           addFormRules: {
               username: [
@@ -163,8 +225,10 @@
                 { validator: checkMobile, trigger: 'blur' }
               ]
 
-          }
-
+          },
+          // 下拉菜单数据
+          selectList: {},
+          userInfo: {}
           }
       },
       methods: {
@@ -173,7 +237,7 @@
           const { data: res } = await this.$http.get('users', {
             params: this.queryInfo
           })
-          console.log(res)
+          // console.log(res)
           // 如果获取失败 提示框提示用户
           if (res.meta.status !== 200) return this.$message(res.meta.msg)
           // 成功 则进行业务逻辑
@@ -263,14 +327,69 @@
               message: '已取消删除'
             })
           })
+        },
+        // 点击修改按钮弹框 渲染对应id用户数据
+        async geteditUser(id) {
+          console.log(id)
+          // 请求数据
+          const { data: res } = await this.$http.get(`users/${id}`)
+          console.log(res)
+          if (res.meta.status !== 200) return this.$message.error('操作失败')
+          this.editForm.username = res.data.username
+          this.editForm.id = res.data.id
+          this.editForm.email = res.data.email
+          this.editForm.mobile = res.data.mobile
+          this.editDialogVisible = true
+        },
+        // 修改对话框中点击确定
+        async editUserInfo() {
+          const { data: res } = await this.$http.put(`users/${this.editForm.id}`, {
+            email: this.editForm.email,
+            mobile: this.editForm.mobile
+          })
+          console.log(res)
+          if (res.meta.status !== 200) return this.$message.error('修改失败！')
+          this.$message.success('修改成功！')
+          // 重新渲染
+          this.getUserList()
+          // 对话框消失
+          this.editDialogVisible = false
+        },
+
+        // 点击分配角色 按钮
+        async openSetRoleInfo(userInfo) {
+          // 获取对应的用户信息
+          this.userInfo = userInfo
+          // 请求数据 渲染下拉菜单中的内容
+         const { data: res } = await this.$http.get('roles')
+          this.selectList = res.data
+          // 弹出对话框
+          this.setRoleDialogVisible = true
+        },
+        // 点击 确定 分配角色
+        async setRoleInfo() {
+          // 非空校验
+          if (!this.roleId) return this.$message.error('请选择')
+          // 点击确认按钮 请求数据
+          const { data: res } = await this.$http.put(`users/${this.userInfo.id}/role`, {
+            rid: this.roleId
+          })
+          if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+          this.$message.success(res.meta.msg)
+          // 隐藏对话框
+          this.setRoleDialogVisible = false
+          // 重新渲染
+          this.getUserList()
+        },
+        // 关闭分配角色对话框事件 重置 reloId
+        setRoleDialogClosed() {
+          this.roleId = ''
         }
       },
       created() {
         this.getUserList()
       },
       components:{
-        // 2. 注册到父组件上
-        Breadcrumb
       }
     }
 </script>

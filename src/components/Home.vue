@@ -13,6 +13,8 @@
           <el-aside width="200px">
             <!-- unique-opened属性 是否只保持一个子菜单为打开状态 -->
             <el-menu
+              ref="menuRef"
+              @open="getSubmenuIndex"
               :collapse="myCollapse"
               :collapse-transition="false"
               router
@@ -33,7 +35,7 @@
                     :index="'/'+subItem.path"
                     v-for="(subItem) in item.children"
                     :key="subItem.id"
-                    @click="saveStatus('/'+subItem.path)"
+                    @click="saveStatus('/'+subItem.path, item.authName, subItem.authName)"
                   >
                     <i class="el-icon-menu"></i>
                     <span>{{ subItem.authName }}</span>
@@ -43,6 +45,8 @@
           </el-aside>
           <!-- 内容主体区域 -->
           <el-main>
+            <Breadcrumb v-if="activeIndex" :firstName="gradeName.firstName" :twoName="gradeName.twoName"></Breadcrumb>
+
             <router-view></router-view>
           </el-main>
         </el-container>
@@ -50,10 +54,19 @@
 </template>
 
 <script>
+
+  // 使用面包屑
+  // 1. 导入公共子组件
+  import Breadcrumb from './subComponents/breadcrumb.vue'
+
     export default {
       name: 'Home',
       data() {
         return {
+          gradeName: {
+            firstName: '',
+            twoNmae: ''
+          },
           menuList:[],
           iconsObj: {
             125:'iconfont icon-user',
@@ -63,7 +76,9 @@
             145:'iconfont icon-baobiao'
           },
           myCollapse: false,
-          activeIndex: ''
+          // 记录二级菜单
+          activeIndex: '',
+          SubmenuIndex: 0
         }
       },
       methods: {
@@ -79,10 +94,20 @@
           this.myCollapse = !this.myCollapse
         },
         // 二级菜单默认高亮显示 保存二级菜单的index值
-        saveStatus(activeIndex) {
+        saveStatus(activeIndex, firstName, twoName) {
           this.activeIndex = activeIndex
           // 保存到本地 用于页面初始化时 设置对应的二级菜单高亮显示
           window.sessionStorage.setItem('activeIndex', activeIndex)
+          // 点击二级菜单将对应的一级菜单及二级菜单名 存入 data中
+          this.gradeName.firstName = firstName
+          this.gradeName.twoName = twoName
+          // 存到本地
+          window.sessionStorage.setItem('gradeName', JSON.stringify(this.gradeName))
+        },
+        // 监听一级菜单打开时 获取对应的index
+        getSubmenuIndex(index) {
+          console.log(index)
+          this.SubmenuIndex = index
         }
       },
       created() {
@@ -90,6 +115,24 @@
         // this.saveStatus()
         // 页面刷新时 让对应的二级菜单高亮显示
         this.activeIndex = window.sessionStorage.getItem('activeIndex')
+        // 页面初始化 时 渲染对应的 面包屑
+        this.gradeName = JSON.parse(window.sessionStorage.getItem('gradeName')) || {}
+      },
+      watch: {
+        // 监听路由
+        $route(newPath) {
+          console.log(newPath)
+          if (newPath.path === '/Welcome') {
+            console.log(321)
+            // 折叠菜单SubmenuIndex
+            this.$refs.menuRef.close(this.SubmenuIndex)
+            this.activeIndex = ''
+            window.sessionStorage.setItem('activeIndex', this.activeIndex)
+          }
+        }
+      },
+      components: {
+        Breadcrumb
       }
     }
 </script>

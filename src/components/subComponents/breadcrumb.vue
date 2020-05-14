@@ -4,8 +4,8 @@
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/Home' }">首页</el-breadcrumb-item>
       <!-- 父传子 -->
-      <el-breadcrumb-item>{{ firstmenu }}</el-breadcrumb-item>
-      <el-breadcrumb-item>{{ secondarymenu }}</el-breadcrumb-item>
+      <el-breadcrumb-item>{{ firstName }}</el-breadcrumb-item>
+      <el-breadcrumb-item>{{ twoName }}</el-breadcrumb-item>
     </el-breadcrumb>
   </div>
 
@@ -14,7 +14,7 @@
 <script>
     export default {
         name: 'breadcrumb',
-      props: ['firstmenu', 'secondarymenu']
+      props: ['firstName', 'twoName']
     }
 </script>
 
