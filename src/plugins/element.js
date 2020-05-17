@@ -3,7 +3,7 @@ import Vue from 'vue'
 import {
   Form, FormItem, Input, Button, Message, Container, Header, Aside, Main, Menu,
   Submenu, MenuItem, MenuItemGroup, Breadcrumb, BreadcrumbItem, Card, Row, Col, Table, TableColumn,
-  Switch, Tooltip, Pagination, Dialog, MessageBox, Select, Option
+  Switch, Tooltip, Pagination, Dialog, MessageBox, Select, Option, Tag, Tree, Cascader
 } from 'element-ui'
 // 注册 在vue实例
 Vue.use(Form)
@@ -31,5 +31,8 @@ Vue.use(Pagination)
 Vue.use(Dialog)
 Vue.use(Select)
 Vue.use(Option)
+Vue.use(Tag)
+Vue.use(Tree)
+Vue.use(Cascader)
 Vue.prototype.$message = Message
 Vue.prototype.$confirm = MessageBox.confirm

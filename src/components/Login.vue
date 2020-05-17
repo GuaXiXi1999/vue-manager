@@ -58,7 +58,7 @@
               const { data: res } = await this.$http.post('login', this.loginForm)
               // console.log(res)
               if (res.meta.status === 200) {
-                console.log(res.data)
+                // console.log(res.data)
                 this.$message({
                   message: '恭喜你，登陆成功',
                   type: 'success'
@@ -68,7 +68,7 @@
                 //  编程式导航 跳转
                 this.$router.push('/Home')
               } else {
-                console.log(res.meta.msg)
+                // console.log(res.meta.msg)
                 this.$message.error(res.meta.msg)
               }
             } else {

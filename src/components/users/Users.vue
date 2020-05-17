@@ -42,8 +42,7 @@
               <template #default="{ row }">
                 <el-button type="primary" icon="el-icon-edit" size="mini" @click="geteditUser(row.id)"></el-button>
                 <el-button @click="removeUser(row.id)" type="danger" icon="el-icon-delete" size="mini"></el-button>
-                <el-tooltip class="item" effect="dark" content="分配角色" placement="top" :enterable="false">
-                  <el-button type="warning" icon="el-icon-star-off" size="mini" @click="openSetRoleInfo(row)"></el-button>
+                <el-tooltip class="item" effect="dark" content="分配角色" placement="top" :enterable="false"><el-button type="warning" icon="el-icon-star-off" size="mini" @click="openSetRoleInfo(row)"></el-button>
                 </el-tooltip>
               </template>
 
@@ -96,7 +95,7 @@
           <!-- 修改对话框 -->
           <div>
             <el-dialog
-              title="添加用户"
+              title="编辑用户"
               :visible.sync="editDialogVisible"
               width="50%">
               <!-- 对话框表单结构 model 绑定表单数据源-->

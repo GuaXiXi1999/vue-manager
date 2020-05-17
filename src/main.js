@@ -5,7 +5,12 @@ import './plugins/element.js'// 导入element
 // import 'element-ui/lib/theme-chalk/index.css'
 import './assets/global.less' // 导入全局样式
 import './assets/fonts/iconfont.css' // 导入字体图标
+import ZkTable from 'vue-table-with-tree-grid' // 导入商品分类去 表格插件
+
+// 注册 表格插件
 import axios from 'axios' // 导入axios
+Vue.use(ZkTable)
+
 // 将axios添加到vue原型对象上
 Vue.prototype.$http = axios
 // 设置请求拦截器

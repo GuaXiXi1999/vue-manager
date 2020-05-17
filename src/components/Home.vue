@@ -6,7 +6,7 @@
             <img src="../assets/logo.png" alt="">
             <span>电商后台管理系统</span>
           </div>
-          <el-button type="info">退出</el-button>
+          <el-button type="info" @click="signOut">退出</el-button>
         </el-header>
         <el-container>
           <!-- 左侧导航栏区域 -->
@@ -82,6 +82,15 @@
         }
       },
       methods: {
+        // 点击退出
+        signOut() {
+          // 清空本地缓存 相关数据 重新赋值为空对象
+          window.sessionStorage.setItem('gradeName', '{}')
+          window.sessionStorage.setItem('token', '{}')
+          window.sessionStorage.setItem('activeIndex', '{}')
+          // 编程式导航 跳转页面
+          this.$router.push('/login')
+        },
         // 获取左侧菜单栏数据
         async getMenuList() {
           const { data: res } = await this.$http.get('menus')

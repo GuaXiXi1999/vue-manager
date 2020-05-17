@@ -5,6 +5,11 @@ import Login from '../components/Login.vue'
 import Home from '../components/Home.vue'
 import Users from '../components/users/Users.vue'
 import Welcome from '../components/Welcome.vue'
+import Rights from '../components/power/Rights.vue'
+import Roles from '../components/power/Roles.vue'
+import Cate from '../components/shop/Cate.vue'
+import Goods from '../components/shop/Goods.vue'
+import Order from '../components/order/Order.vue'
 Vue.use(VueRouter)
 // 导入模板
 // 配置路由规则
@@ -18,7 +23,12 @@ const router = new VueRouter({
       redirect: '/Welcome',
       children : [
         { path: '/Welcome', component: Welcome },
-        { path: '/users', component: Users }
+        { path: '/users', component: Users },
+        { path: '/rights', component: Rights },
+        { path: '/roles', component: Roles },
+        { path: '/categories', component: Cate },
+        { path: '/goods', component: Goods },
+        { path: '/orders', component: Order }
       ]
     }
   ]
