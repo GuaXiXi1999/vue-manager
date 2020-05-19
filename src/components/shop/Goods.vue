@@ -13,7 +13,7 @@
           <!-- 添加商品按钮 -->
           <el-col :span="5">
             <div style="margin-top: 15px;" class="GoodsAddBtn">
-              <el-button type="primary">添加商品</el-button>
+              <el-button type="primary" @click="addShop">添加商品</el-button>
             </div>
           </el-col>
         </el-row>
@@ -244,6 +244,11 @@
           if (res.meta.status !== 200) return this.$message.error('修改失败')
           this.getGoodsList()
           this.editGoodDialogVisible = false
+        },
+        // 点击添加商品
+        addShop() {
+            // 点击添加按钮 使用哦push 进行跳转
+            this.$router.push('/goods/add')
         }
       },
       created() {
